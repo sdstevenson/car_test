@@ -7,7 +7,11 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+gpiozero = "^2.0.1"
+pygame = "^2.6.1"
 
+[tool.poetry.scripts]
+controller = "car_test.controller:monitor_controller"
 
 [build-system]
 requires = ["poetry-core"]
