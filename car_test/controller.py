@@ -183,6 +183,8 @@ def main():
     while True:
         left_motor.forward_motion()
         time.sleep(2)
+        left_motor.stop()
+        time.sleep(2)
         left_motor.backward_motion()
         time.sleep(2)
         left_motor.stop()
