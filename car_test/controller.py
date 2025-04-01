@@ -177,8 +177,8 @@ def monitor_controller():
     finally:
         pygame.quit()
         
-if __name__ == "__main__":
-    # monitor_controller()
+
+def main():
     left_motor = motors.ThreePinMotor(forward_pin=3, backward_pin=5, speed_pin=15)
     while True:
         left_motor.forward_motion()
@@ -187,3 +187,6 @@ if __name__ == "__main__":
         time.sleep(2)
         left_motor.stop()
         time.sleep(2)
+
+if __name__ == "__main__":
+    main()
