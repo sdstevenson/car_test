@@ -142,6 +142,42 @@ def monitor_controller():
                 else:
                     right_motor.stop()
 
+            elif steering > 0.1 or steering < -0.1:
+                # Tank steering mode (rotate in place)
+                # When steering left: left motor backward, right motor forward
+                # When steering right: left motor forward, right motor backward
+                
+                # Use steering magnitude for both motors' speed
+                turn_speed = abs(steering) * left_motor.max_speed
+                
+                if steering < 0:  # Steering left
+                    # Left motor backward
+                    left_motor.forward.off()
+                    left_motor.backward.on()
+                    left_motor.set_speed(turn_speed)
+                    
+                    # Right motor forward
+                    right_motor.forward.on()
+                    right_motor.backward.off()
+                    right_motor.set_speed(turn_speed)
+                    
+                    # Display values
+                    print("Tank steering LEFT")
+                    
+                else:  # Steering right
+                    # Left motor forward
+                    left_motor.forward.on()
+                    left_motor.backward.off()
+                    left_motor.set_speed(turn_speed)
+                    
+                    # Right motor backward
+                    right_motor.forward.off()
+                    right_motor.backward.on()
+                    right_motor.set_speed(turn_speed)
+                    
+                    # Display values
+                    print("Tank steering RIGHT")
+
             else:
                 # No throttle input, stop both motors
                 left_motor.stop()
