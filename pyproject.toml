@@ -12,6 +12,7 @@ pygame = "^2.6.1"
 
 [tool.poetry.scripts]
 controller = "car_test.controller:main"
+test = "car_test.test:main"
 
 [build-system]
 requires = ["poetry-core"]
