@@ -180,4 +180,10 @@ def monitor_controller():
 if __name__ == "__main__":
     # monitor_controller()
     left_motor = motors.ThreePinMotor(forward_pin=3, backward_pin=5, speed_pin=15)
-    left_motor.forward_motion()
+    while True:
+        left_motor.forward_motion()
+        time.sleep(2)
+        left_motor.backward_motion()
+        time.sleep(2)
+        left_motor.stop()
+        time.sleep(2)
