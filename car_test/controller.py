@@ -104,7 +104,7 @@ def monitor_controller():
             left_motor_speed = 0
             right_motor_speed = 0
 
-            if throttle != 0:
+            if throttle > 0.1 or throttle < -0.1:
                 # Calculate left/right motor speeds (ranges from -1 to 1)
                 left_motor_speed = throttle - steering
                 right_motor_speed = throttle + steering
