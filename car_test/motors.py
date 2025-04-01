@@ -3,7 +3,7 @@ from gpiozero.pins.mock import MockFactory, MockPWMPin
 from gpiozero import Device
 
 # No GPIO pins on windows, use MockFactory
-Device.pin_factory = MockFactory(pin_class=MockPWMPin)
+# Device.pin_factory = MockFactory(pin_class=MockPWMPin)
 
 class ThreePinMotor:
     def __init__(self, forward_pin:int, backward_pin:int, speed_pin:int):
