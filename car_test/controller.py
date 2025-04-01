@@ -66,8 +66,10 @@ def read_controller_input(controller):
 def monitor_controller():
     """Main function to continuously monitor controller input."""
     controller = initialize_controller()
-    left_motor = motors.ThreePinMotor(forward_pin=3, backward_pin=5, speed_pin=15)
-    right_motor = motors.ThreePinMotor(forward_pin=11, backward_pin=13, speed_pin=16)
+    left_motor = motors.ThreePinMotor(forward_pin=17, backward_pin=27, speed_pin=12)
+    # Physical pins: forward=11, backward=13, speed=32
+    right_motor = motors.ThreePinMotor(forward_pin=22, backward_pin=23, speed_pin=13)
+    # Physical pins: forward=15, backward=16, speed=33
 
     # Track the last hat state to detect changes
     last_hat_y = 0
@@ -179,7 +181,12 @@ def monitor_controller():
         
 
 def main():
-    left_motor = motors.ThreePinMotor(forward_pin=3, backward_pin=5, speed_pin=15)
+    monitor_controller()
+    return
+    left_motor = motors.ThreePinMotor(forward_pin=17, backward_pin=27, speed_pin=12)
+    # Physical pins: forward=11, backward=13, speed=32
+    right_motor = motors.ThreePinMotor(forward_pin=22, backward_pin=23, speed_pin=13)
+    # Physical pins: forward=15, backward=16, speed=33
     while True:
         left_motor.forward_motion()
         time.sleep(2)
