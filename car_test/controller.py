@@ -178,4 +178,6 @@ def monitor_controller():
         pygame.quit()
         
 if __name__ == "__main__":
-    monitor_controller()
+    # monitor_controller()
+    left_motor = motors.ThreePinMotor(forward_pin=3, backward_pin=5, speed_pin=15)
+    left_motor.forward_motion()
