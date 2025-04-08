@@ -108,7 +108,7 @@ def monitor_controller():
             # Right stick is higher priority, used for tank steering
             if abs(right_stick_x) > 0.1:
                 # Use steering magnitude for both motors' speed
-                turn_speed = abs(steering) * left_motor.max_speed
+                turn_speed = abs(right_stick_x) * left_motor.max_speed
                 
                 if right_stick_x < 0:  # Steering left
                     left_motor.forward.off()
@@ -120,7 +120,7 @@ def monitor_controller():
                     right_motor.set_speed(turn_speed)
                     
                     # Display values
-                    print("Tank steering LEFT // " + turn_speed)
+                    print(f"Tank steering LEFT {turn_speed}")
                     
                 else:  # Steering right
                     left_motor.forward.on()
@@ -131,7 +131,7 @@ def monitor_controller():
                     right_motor.backward.on()
                     right_motor.set_speed(turn_speed)
                     
-                    print("Tank steering RIGHT // " + turn_speed)
+                    print(f"Tank steering RIGHT {turn_speed}")
             elif abs(throttle) > 0.05 or abs(steering) > 0.05:
                 # Calculate left/right motor speeds (ranges from -1 to 1)
                 left_motor_speed = throttle + steering
