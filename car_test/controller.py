@@ -94,6 +94,7 @@ def monitor_controller():
             # Get joystick values (assuming left stick is used for driving)
             left_stick_y = -inputs['axes'][1]  # Y-axis: forward (-1) / backward (1)
             left_stick_x = inputs['axes'][0]   # X-axis: left (-1) / right (1)
+            right_stick_x = inputs['axes'][3]  # X-axis: left (-1) / right (1)
 
             # Convert joystick position to motor commands for differential drive
             # Invert Y because joystick forward is negative
@@ -104,7 +105,34 @@ def monitor_controller():
             left_motor_speed = 0
             right_motor_speed = 0
 
-            if throttle > 0.1 or throttle < -0.1:
+            # Right stick is higher priority, used for tank steering
+            if abs(right_stick_x) > 0.1:
+                # Use steering magnitude for both motors' speed
+                turn_speed = abs(steering) * left_motor.max_speed
+                
+                if steering < 0:  # Steering left
+                    left_motor.forward.off()
+                    left_motor.backward.on()
+                    left_motor.set_speed(turn_speed)
+                    
+                    right_motor.forward.on()
+                    right_motor.backward.off()
+                    right_motor.set_speed(turn_speed)
+                    
+                    # Display values
+                    print("Tank steering LEFT")
+                    
+                else:  # Steering right
+                    left_motor.forward.on()
+                    left_motor.backward.off()
+                    left_motor.set_speed(turn_speed)
+                    
+                    right_motor.forward.off()
+                    right_motor.backward.on()
+                    right_motor.set_speed(turn_speed)
+                    
+                    print("Tank steering RIGHT")
+            elif abs(throttle) > 0.05 or abs(steering) > 0.05:
                 # Calculate left/right motor speeds (ranges from -1 to 1)
                 left_motor_speed = throttle + steering
                 right_motor_speed = throttle - steering
@@ -141,42 +169,6 @@ def monitor_controller():
                     right_motor.set_speed(abs(right_motor_speed))
                 else:
                     right_motor.stop()
-
-            elif steering > 0.1 or steering < -0.1:
-                # Tank steering mode (rotate in place)
-                # When steering left: left motor backward, right motor forward
-                # When steering right: left motor forward, right motor backward
-                
-                # Use steering magnitude for both motors' speed
-                turn_speed = abs(steering) * left_motor.max_speed
-                
-                if steering < 0:  # Steering left
-                    # Left motor backward
-                    left_motor.forward.off()
-                    left_motor.backward.on()
-                    left_motor.set_speed(turn_speed)
-                    
-                    # Right motor forward
-                    right_motor.forward.on()
-                    right_motor.backward.off()
-                    right_motor.set_speed(turn_speed)
-                    
-                    # Display values
-                    print("Tank steering LEFT")
-                    
-                else:  # Steering right
-                    # Left motor forward
-                    left_motor.forward.on()
-                    left_motor.backward.off()
-                    left_motor.set_speed(turn_speed)
-                    
-                    # Right motor backward
-                    right_motor.forward.off()
-                    right_motor.backward.on()
-                    right_motor.set_speed(turn_speed)
-                    
-                    # Display values
-                    print("Tank steering RIGHT")
 
             else:
                 # No throttle input, stop both motors
