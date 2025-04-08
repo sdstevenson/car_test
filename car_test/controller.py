@@ -106,8 +106,8 @@ def monitor_controller():
 
             if throttle > 0.1 or throttle < -0.1:
                 # Calculate left/right motor speeds (ranges from -1 to 1)
-                left_motor_speed = throttle - steering
-                right_motor_speed = throttle + steering
+                left_motor_speed = throttle + steering
+                right_motor_speed = throttle - steering
 
                 # Normalize speeds if they exceed limits (-1 to 1)
                 max_magnitude = max(abs(left_motor_speed), abs(right_motor_speed))
