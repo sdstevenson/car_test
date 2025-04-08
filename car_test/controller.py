@@ -110,7 +110,7 @@ def monitor_controller():
                 # Use steering magnitude for both motors' speed
                 turn_speed = abs(steering) * left_motor.max_speed
                 
-                if steering < 0:  # Steering left
+                if right_stick_x < 0:  # Steering left
                     left_motor.forward.off()
                     left_motor.backward.on()
                     left_motor.set_speed(turn_speed)
@@ -120,7 +120,7 @@ def monitor_controller():
                     right_motor.set_speed(turn_speed)
                     
                     # Display values
-                    print("Tank steering LEFT")
+                    print("Tank steering LEFT // " + turn_speed)
                     
                 else:  # Steering right
                     left_motor.forward.on()
@@ -131,7 +131,7 @@ def monitor_controller():
                     right_motor.backward.on()
                     right_motor.set_speed(turn_speed)
                     
-                    print("Tank steering RIGHT")
+                    print("Tank steering RIGHT // " + turn_speed)
             elif abs(throttle) > 0.05 or abs(steering) > 0.05:
                 # Calculate left/right motor speeds (ranges from -1 to 1)
                 left_motor_speed = throttle + steering
