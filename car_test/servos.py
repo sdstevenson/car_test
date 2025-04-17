@@ -18,9 +18,12 @@ class CustomServo:
 def main():
     servo = CustomServo(pin=18)
     while True:
+        print("Left")
         servo.set_angle(-1)
         time.sleep(1)
+        print("Middle")
         servo.set_angle(0)
         time.sleep(1)
+        print("Right")
         servo.set_angle(1)
         time.sleep(1)
