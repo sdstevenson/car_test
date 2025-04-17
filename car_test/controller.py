@@ -105,13 +105,14 @@ def monitor_controller():
             throttle = -left_stick_y  # Range: -1 (full backward) to 1 (full forward)
             steering = left_stick_x   # Range: -1 (full left) to 1 (full right)
 
-            # Steering applied regardless of drive mode
-            front_steering.set_angle(steering)
-            back_steering.set_angle(steering * 0.7)
+            # Steering applied regardless of drive mode, only update if steering is applied
+            if abs(steering) > 0.05:
+                front_steering.set_angle(steering)
+                back_steering.set_angle(steering * 0.7)
 
-            front_angle_degrees = steering * 45  # Convert to approximate degrees
-            back_angle_degrees = steering * 0.7 * 45
-            print(f"Steering angles: Front={front_angle_degrees:.1f}°, Back={back_angle_degrees:.1f}°")
+                front_angle_degrees = steering * 45  # Convert to approximate degrees
+                back_angle_degrees = steering * 0.7 * 45
+                print(f"Steering angles: Front={front_angle_degrees:.1f}°, Back={back_angle_degrees:.1f}°")
 
             # Calculate motor speeds for differential steering
             left_motor_speed = 0
