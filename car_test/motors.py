@@ -1,6 +1,6 @@
 from gpiozero import OutputDevice, PWMOutputDevice
-from gpiozero.pins.mock import MockFactory, MockPWMPin
-from gpiozero import Device
+# from gpiozero.pins.mock import MockFactory, MockPWMPin
+# from gpiozero import Device
 
 # No GPIO pins on windows, use MockFactory
 # Device.pin_factory = MockFactory(pin_class=MockPWMPin)

@@ -1,7 +1,7 @@
 import pygame
 import time
 import sys
-import car_test.motors as motors
+from car_test import motors, servos
 
 def initialize_controller():
     """Initialize pygame and set up controller detection."""
@@ -66,10 +66,14 @@ def read_controller_input(controller):
 def monitor_controller():
     """Main function to continuously monitor controller input."""
     controller = initialize_controller()
+        # Physical pins: forward=11, backward=13, speed=32
     left_motor = motors.ThreePinMotor(forward_pin=17, backward_pin=27, speed_pin=12)
-    # Physical pins: forward=11, backward=13, speed=32
+        # Physical pins: forward=15, backward=16, speed=33
     right_motor = motors.ThreePinMotor(forward_pin=22, backward_pin=23, speed_pin=13)
-    # Physical pins: forward=15, backward=16, speed=33
+        # Physical pin: 12
+    front_steering = servos.CustomServo(pin=18)
+        # Physical pin: 35
+    back_steering = servos.CustomServo(pin=19)
 
     # Track the last hat state to detect changes
     last_hat_y = 0
@@ -100,6 +104,15 @@ def monitor_controller():
             # Invert Y because joystick forward is negative
             throttle = -left_stick_y  # Range: -1 (full backward) to 1 (full forward)
             steering = left_stick_x   # Range: -1 (full left) to 1 (full right)
+
+            # Steering applied regardless of drive mode, only update if steering is applied
+            if abs(steering) > 0.05:
+                front_steering.set_angle(steering)
+                back_steering.set_angle(steering * 0.7)
+
+                front_angle_degrees = steering * 45  # Convert to approximate degrees
+                back_angle_degrees = steering * 0.7 * 45
+                print(f"Steering angles: Front={front_angle_degrees:.1f}°, Back={back_angle_degrees:.1f}°")
 
             # Calculate motor speeds for differential steering
             left_motor_speed = 0
@@ -133,9 +146,11 @@ def monitor_controller():
                     
                     print(f"Tank steering RIGHT {turn_speed}")
             elif abs(throttle) > 0.05 or abs(steering) > 0.05:
-                # Calculate left/right motor speeds (ranges from -1 to 1)
-                left_motor_speed = throttle + steering
-                right_motor_speed = throttle - steering
+                # Calculate turn angle (from -1 to 1)
+                    # Reduce differential steering since servos are doing most of the turning
+                differential_factor = 0.3
+                left_motor_speed = throttle + (steering * differential_factor)
+                right_motor_speed = throttle - (steering * differential_factor)
 
                 # Normalize speeds if they exceed limits (-1 to 1)
                 max_magnitude = max(abs(left_motor_speed), abs(right_motor_speed))
@@ -210,20 +225,6 @@ def monitor_controller():
 
 def main():
     monitor_controller()
-    return
-    left_motor = motors.ThreePinMotor(forward_pin=17, backward_pin=27, speed_pin=12)
-    # Physical pins: forward=11, backward=13, speed=32
-    right_motor = motors.ThreePinMotor(forward_pin=22, backward_pin=23, speed_pin=13)
-    # Physical pins: forward=15, backward=16, speed=33
-    while True:
-        left_motor.forward_motion()
-        time.sleep(2)
-        left_motor.stop()
-        time.sleep(2)
-        left_motor.backward_motion()
-        time.sleep(2)
-        left_motor.stop()
-        time.sleep(2)
 
 if __name__ == "__main__":
     main()
