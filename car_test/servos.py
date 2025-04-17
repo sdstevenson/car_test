@@ -16,14 +16,18 @@ class CustomServo:
         self.servo.value = angle
 
 def main():
-    servo = CustomServo(pin=18)
+    left_servo = CustomServo(pin=18)
+    right_servo = CustomServo(pin=19)
     while True:
         print("Left")
-        servo.set_angle(-1)
+        left_servo.set_angle(-1)
+        right_servo.set_angle(-1)
         time.sleep(1)
         print("Middle")
-        servo.set_angle(0)
+        left_servo.set_angle(0)
+        right_servo.set_angle(0)
         time.sleep(1)
         print("Right")
-        servo.set_angle(1)
+        left_servo.set_angle(1)
+        right_servo.set_angle(1)
         time.sleep(1)
