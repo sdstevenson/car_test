@@ -1,6 +1,6 @@
 Basic python script to read in input from a logitech game controller and output it to specific raspberry pi pins to control a simple car.
 
-Installs
+Installs:
 Poetry [https://python-poetry.org/docs/]
 sudo apt install python3-pigpio python3-rpi.gpio
 
