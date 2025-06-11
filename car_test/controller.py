@@ -1,7 +1,7 @@
 import pygame
 import time
 import sys
-from car_test import motors, servos
+# from car_test import motors, servos
 
 def initialize_controller():
     """Initialize pygame and set up controller detection."""
@@ -43,7 +43,7 @@ def initialize_controller():
     
     return controller
 
-def read_controller_input(controller):
+def read_controller_input(controller : pygame.joystick.JoystickType):
     """Read and return all controller inputs."""
     # Need to call event pump to update controller state
     pygame.event.pump()
@@ -66,14 +66,10 @@ def read_controller_input(controller):
 def monitor_controller():
     """Main function to continuously monitor controller input."""
     controller = initialize_controller()
-        # Physical pins: forward=11, backward=13, speed=32
-    left_motor = motors.ThreePinMotor(forward_pin=17, backward_pin=27, speed_pin=12)
-        # Physical pins: forward=15, backward=16, speed=33
-    right_motor = motors.ThreePinMotor(forward_pin=22, backward_pin=23, speed_pin=13)
-        # Physical pin: 12
-    front_steering = servos.CustomServo(pin=18)
-        # Physical pin: 35
-    back_steering = servos.CustomServo(pin=19)
+    # left_motor = motors.ThreePinMotor(forward_pin=17, backward_pin=27, speed_pin=12)
+    # Physical pins: forward=11, backward=13, speed=32
+    # right_motor = motors.ThreePinMotor(forward_pin=22, backward_pin=23, speed_pin=13)
+    # Physical pins: forward=15, backward=16, speed=33
 
     # Track the last hat state to detect changes
     last_hat_y = 0
@@ -105,15 +101,6 @@ def monitor_controller():
             throttle = -left_stick_y  # Range: -1 (full backward) to 1 (full forward)
             steering = left_stick_x   # Range: -1 (full left) to 1 (full right)
 
-            # Steering applied regardless of drive mode, only update if steering is applied
-            if abs(steering) > 0.05:
-                front_steering.set_angle(steering)
-                back_steering.set_angle(steering * 0.7)
-
-                front_angle_degrees = steering * 45  # Convert to approximate degrees
-                back_angle_degrees = steering * 0.7 * 45
-                print(f"Steering angles: Front={front_angle_degrees:.1f}°, Back={back_angle_degrees:.1f}°")
-
             # Calculate motor speeds for differential steering
             left_motor_speed = 0
             right_motor_speed = 0
@@ -121,98 +108,99 @@ def monitor_controller():
             # Right stick is higher priority, used for tank steering
             if abs(right_stick_x) > 0.1:
                 # Use steering magnitude for both motors' speed
-                turn_speed = abs(right_stick_x) * left_motor.max_speed
+                # turn_speed = abs(right_stick_x) * left_motor.max_speed
+                turn_speed = abs(right_stick_x)
                 
                 if right_stick_x < 0:  # Steering left
-                    left_motor.forward.off()
-                    left_motor.backward.on()
-                    left_motor.set_speed(turn_speed)
+                    # left_motor.forward.off()
+                    # left_motor.backward.on()
+                    # left_motor.set_speed(turn_speed)
                     
-                    right_motor.forward.on()
-                    right_motor.backward.off()
-                    right_motor.set_speed(turn_speed)
+                    # right_motor.forward.on()
+                    # right_motor.backward.off()
+                    # right_motor.set_speed(turn_speed)
                     
                     # Display values
                     print(f"Tank steering LEFT {turn_speed}")
                     
                 else:  # Steering right
-                    left_motor.forward.on()
-                    left_motor.backward.off()
-                    left_motor.set_speed(turn_speed)
+                    # left_motor.forward.on()
+                    # left_motor.backward.off()
+                    # left_motor.set_speed(turn_speed)
                     
-                    right_motor.forward.off()
-                    right_motor.backward.on()
-                    right_motor.set_speed(turn_speed)
+                    # right_motor.forward.off()
+                    # right_motor.backward.on()
+                    # right_motor.set_speed(turn_speed)
                     
                     print(f"Tank steering RIGHT {turn_speed}")
             elif abs(throttle) > 0.05 or abs(steering) > 0.05:
-                # Calculate turn angle (from -1 to 1)
-                    # Reduce differential steering since servos are doing most of the turning
-                differential_factor = 0.3
-                left_motor_speed = throttle + (steering * differential_factor)
-                right_motor_speed = throttle - (steering * differential_factor)
+                # Calculate left/right motor speeds (ranges from -1 to 1)
+                pass
+                # left_motor_speed = throttle + steering
+                # right_motor_speed = throttle - steering
 
-                # Normalize speeds if they exceed limits (-1 to 1)
-                max_magnitude = max(abs(left_motor_speed), abs(right_motor_speed))
-                if max_magnitude > 1:
-                    left_motor_speed /= max_magnitude
-                    right_motor_speed /= max_magnitude
+                # # Normalize speeds if they exceed limits (-1 to 1)
+                # max_magnitude = max(abs(left_motor_speed), abs(right_motor_speed))
+                # if max_magnitude > 1:
+                #     left_motor_speed /= max_magnitude
+                #     right_motor_speed /= max_magnitude
                 
-                # Apply max_speed scaling
-                left_motor_speed *= left_motor.max_speed
-                right_motor_speed *= right_motor.max_speed
+                # # Apply max_speed scaling
+                # left_motor_speed *= left_motor.max_speed
+                # right_motor_speed *= right_motor.max_speed
 
-                # Apply motor commands based on calculated speeds
-                if left_motor_speed > 0:
-                    left_motor.forward.on()
-                    left_motor.backward.off()
-                    left_motor.set_speed(left_motor_speed)
-                elif left_motor_speed < 0:
-                    left_motor.forward.off()
-                    left_motor.backward.on()
-                    left_motor.set_speed(abs(left_motor_speed))
-                else:
-                    left_motor.stop()
+                # # Apply motor commands based on calculated speeds
+                # if left_motor_speed > 0:
+                #     left_motor.forward.on()
+                #     left_motor.backward.off()
+                #     left_motor.set_speed(left_motor_speed)
+                # elif left_motor_speed < 0:
+                #     left_motor.forward.off()
+                #     left_motor.backward.on()
+                #     left_motor.set_speed(abs(left_motor_speed))
+                # else:
+                #     left_motor.stop()
 
-                if right_motor_speed > 0:
-                    right_motor.forward.on()
-                    right_motor.backward.off()
-                    right_motor.set_speed(right_motor_speed)
-                elif right_motor_speed < 0:
-                    right_motor.forward.off()
-                    right_motor.backward.on()
-                    right_motor.set_speed(abs(right_motor_speed))
-                else:
-                    right_motor.stop()
+                # if right_motor_speed > 0:
+                #     right_motor.forward.on()
+                #     right_motor.backward.off()
+                #     right_motor.set_speed(right_motor_speed)
+                # elif right_motor_speed < 0:
+                #     right_motor.forward.off()
+                #     right_motor.backward.on()
+                #     right_motor.set_speed(abs(right_motor_speed))
+                # else:
+                #     right_motor.stop()
 
             else:
                 # No throttle input, stop both motors
-                left_motor.stop()
-                right_motor.stop()
+                # left_motor.stop()
+                # right_motor.stop()
+                pass
 
-            if len(inputs['hats']) > 0:
-                hat_x, hat_y = inputs['hats'][0]
+            # if len(inputs['hats']) > 0:
+            #     hat_x, hat_y = inputs['hats'][0]
 
-                # Only process if D-pad is pressed and it's a new press
-                if hat_y != last_hat_y:
-                    if hat_y == 1:  # D-pad Up pressed
-                        new_max = min(left_motor.max_speed + speed_increment, 1.0)
-                        left_motor.set_max_speed(new_max)
-                        right_motor.set_max_speed(new_max)
-                        print(f"\nMax speed increased to {new_max:.2f}")
-                    elif hat_y == -1:  # D-pad Down pressed
-                        new_max = max(left_motor.max_speed - speed_increment, 0.1)
-                        left_motor.set_max_speed(new_max)
-                        right_motor.set_max_speed(new_max)
-                        print(f"\nMax speed decreased to {new_max:.2f}")
+            #     # Only process if D-pad is pressed and it's a new press
+            #     if hat_y != last_hat_y:
+            #         if hat_y == 1:  # D-pad Up pressed
+            #             new_max = min(left_motor.max_speed + speed_increment, 1.0)
+            #             left_motor.set_max_speed(new_max)
+            #             right_motor.set_max_speed(new_max)
+            #             print(f"\nMax speed increased to {new_max:.2f}")
+            #         elif hat_y == -1:  # D-pad Down pressed
+            #             new_max = max(left_motor.max_speed - speed_increment, 0.1)
+            #             left_motor.set_max_speed(new_max)
+            #             right_motor.set_max_speed(new_max)
+            #             print(f"\nMax speed decreased to {new_max:.2f}")
 
-                # Save current hat state
-                last_hat_y = hat_y
+            #     # Save current hat state
+            #     last_hat_y = hat_y
 
 
             # Display calculated values
             print(f"\nThrottle: {throttle:.2f}, Steering: {steering:.2f}")
-            print(f"Left Motor: {left_motor_speed:.2f}, Right Motor: {right_motor_speed:.2f}")
+            # print(f"Left Motor: {left_motor_speed:.2f}, Right Motor: {right_motor_speed:.2f}")
 
             time.sleep(0.1)  # Prevent excessive CPU usage
             
@@ -225,6 +213,7 @@ def monitor_controller():
 
 def main():
     monitor_controller()
+    return
 
 if __name__ == "__main__":
     main()
