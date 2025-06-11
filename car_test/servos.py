@@ -3,8 +3,9 @@ from gpiozero import Servo
 import time
 
 class CustomServo:
-    def __init__(self, pin:int):
+    def __init__(self, pin:int, angle:float = 0):
         self.servo:Servo = Servo(pin)
+        self.set_angle(angle)
 
     def set_angle(self, angle:float):
         """Acceptable inputs from -1 to 1"""
@@ -14,6 +15,12 @@ class CustomServo:
         elif angle > 1:
             angle = 1
         self.servo.value = angle
+    
+    def decrease_angle(self):
+        self.set_angle(self.servo.value - 0.1)
+    
+    def increase_angle(self):
+        self.set_angle(self.servo.value + 0.1)
 
 def main():
     left_servo = CustomServo(pin=18)

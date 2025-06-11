@@ -1,6 +1,7 @@
 import pygame
 import time
 import sys
+from car_test import servos
 # from car_test import motors, servos
 
 def initialize_controller():
@@ -66,6 +67,10 @@ def read_controller_input(controller : pygame.joystick.JoystickType):
 def monitor_controller():
     """Main function to continuously monitor controller input."""
     controller = initialize_controller()
+        # Physical pin: 12
+    latch_servo = servos.CustomServo(pin=18)
+
+
     # left_motor = motors.ThreePinMotor(forward_pin=17, backward_pin=27, speed_pin=12)
     # Physical pins: forward=11, backward=13, speed=32
     # right_motor = motors.ThreePinMotor(forward_pin=22, backward_pin=23, speed_pin=13)
@@ -90,20 +95,32 @@ def monitor_controller():
             print(f"Buttons: {inputs['buttons']}")
             print(f"Hats (D-pad): {inputs['hats']}")
 
-            # Control the car based on controller inputs
-            # Get joystick values (assuming left stick is used for driving)
+            # Collect controller inputs
             left_stick_y = -inputs['axes'][1]  # Y-axis: forward (-1) / backward (1)
             left_stick_x = inputs['axes'][0]   # X-axis: left (-1) / right (1)
             right_stick_x = inputs['axes'][3]  # X-axis: left (-1) / right (1)
+            x_clicked = bool(inputs['buttons'][0])
+            a_clicked = bool(inputs['buttons'][1])
 
             # Convert joystick position to motor commands for differential drive
-            # Invert Y because joystick forward is negative
+                # Invert Y because joystick forward is negative
             throttle = -left_stick_y  # Range: -1 (full backward) to 1 (full forward)
             steering = left_stick_x   # Range: -1 (full left) to 1 (full right)
 
             # Calculate motor speeds for differential steering
             left_motor_speed = 0
             right_motor_speed = 0
+
+            # Servo up/down with x/a
+                # If both are clicked, don't do either
+            if (x_clicked and a_clicked):
+                print(f"Do not press A and X at the same time")
+            elif (x_clicked):
+                print(f"Opening latch")
+                latch_servo.increase_angle()
+            elif (a_clicked):
+                print(f"Closing latch")
+                latch_servo.decrease_angle()
 
             # Right stick is higher priority, used for tank steering
             if abs(right_stick_x) > 0.1:
